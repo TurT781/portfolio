@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import type { SceneHandle } from "@/components/traversee/scene";
+import type { SceneHandle } from "@/components/traversee/foil-scene";
 
 function hasWebGL(): boolean {
   try {
@@ -38,7 +38,7 @@ export function Scene() {
     if (still) document.documentElement.classList.add("still");
 
     // three.js n'est chargé qu'ici, après hydratation : le LCP reste du texte.
-    import("@/components/traversee/scene")
+    import("@/components/traversee/foil-scene")
       .then(({ createScene }) => {
         if (cancelled) return;
         handle = createScene({
