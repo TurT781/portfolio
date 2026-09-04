@@ -235,21 +235,38 @@ export function createScene(o: SceneOptions): SceneHandle {
     }
     composer.render();
   };
-  renderer.compileAsync(scene, camera).then(() => { if (!disposed) renderer.setAnimationLoop(loop); });
+  // Shader compile off the main thread, with a safety net: if the driver never
+  // reports completion, start anyway after 1.5 s (the first frames then compile
+  // synchronously, as before).
+  let started = false;
+  const compiled = renderer.compileAsync(scene, camera).then(() => undefined, () => undefined);
+  const start = () => {
+    if (disposed || started) return;
+    started = true;
+    renderer.setAnimationLoop(loop);
+  };
+  compiled.then(start);
+  const startTimer = setTimeout(start, 1500);
 
   return {
     dispose() {
       disposed = true;
+      clearTimeout(startTimer);
       renderer.setAnimationLoop(null);
       window.removeEventListener("pointermove", onPointer);
       window.removeEventListener("resize", onResize);
       document.removeEventListener("visibilitychange", onVisibility);
-      scene.traverse((obj) => {
-        if (obj instanceof THREE.Mesh || obj instanceof THREE.Points) obj.geometry.dispose();
+      // GPU resources are released only once the compile has settled: three's
+      // internal polling would otherwise read disposed program state and throw.
+      // (If the compile never settles — driver bug — this leaks rather than throws.)
+      compiled.then(() => {
+        scene.traverse((obj) => {
+          if (obj instanceof THREE.Mesh || obj instanceof THREE.Points) obj.geometry.dispose();
+        });
+        foil.dispose(); dustMat.dispose(); sprite.dispose(); envTex.dispose(); envRT.dispose(); pmrem.dispose();
+        bloom?.dispose();
+        composer.dispose(); renderer.dispose();
       });
-      foil.dispose(); dustMat.dispose(); sprite.dispose(); envTex.dispose(); envRT.dispose(); pmrem.dispose();
-      bloom?.dispose();
-      composer.dispose(); renderer.dispose();
     },
   };
 }
