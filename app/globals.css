@@ -104,7 +104,7 @@ html.still .brand, html.still .pill, html.still .rail, html.still .hint, html.st
 .cform label { display: grid; gap: 6px; }
 .cform label span { font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--color-faint); }
 .cform input, .cform textarea { width: 100%; background: transparent; border: 0; border-bottom: 1px solid var(--color-hair); color: var(--color-text); font: inherit; font-size: 14px; padding: 8px 0; min-height: 24px; resize: none; }
-.cform input:focus, .cform textarea:focus { outline: none; border-bottom-color: var(--color-ice); }
+.cform input:focus, .cform textarea:focus { border-bottom-color: var(--color-ice); }
 .cform .send { grid-template-columns: auto 1fr; align-items: center; }
 .cform button { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--color-ice); min-height: 24px; }
 .cform button:disabled { opacity: 0.5; cursor: default; }
