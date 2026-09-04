@@ -79,7 +79,8 @@ export function createScene(o: SceneOptions): SceneHandle {
   envTex.mapping = THREE.EquirectangularReflectionMapping;
   envTex.colorSpace = THREE.SRGBColorSpace;
   const pmrem = new THREE.PMREMGenerator(renderer);
-  scene.environment = pmrem.fromEquirectangular(envTex).texture;
+  const envRT = pmrem.fromEquirectangular(envTex);
+  scene.environment = envRT.texture;
 
   // Le foil. Valeurs validées sur prototype, à régler à l'œil sur GPU réel.
   const foil = new THREE.MeshPhysicalMaterial({
@@ -166,15 +167,19 @@ export function createScene(o: SceneOptions): SceneHandle {
   const dustGeo = new THREE.BufferGeometry();
   dustGeo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
   dustGeo.setAttribute("color", new THREE.BufferAttribute(col, 3));
-  const dustMat = new THREE.PointsMaterial({ size: 0.09, map: dustSprite(), vertexColors: true, transparent: true, opacity: 0.75, blending: THREE.AdditiveBlending, depthWrite: false });
+  const sprite = dustSprite();
+  const dustMat = new THREE.PointsMaterial({ size: 0.09, map: sprite, vertexColors: true, transparent: true, opacity: 0.75, blending: THREE.AdditiveBlending, depthWrite: false });
   scene.add(new THREE.Points(dustGeo, dustMat));
 
   /* ── Post-traitement ── */
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
-  const bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.55, 0.7, 0.82);
   const useBloom = !RM && !mobile;
-  if (useBloom) composer.addPass(bloom);
+  let bloom: UnrealBloomPass | undefined;
+  if (useBloom) {
+    bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.55, 0.7, 0.82);
+    composer.addPass(bloom);
+  }
 
   /* ── Scroll = position de la caméra. Rien d'autre ne bouge la page. ── */
   const maxScroll = () => document.documentElement.scrollHeight - window.innerHeight;
@@ -240,7 +245,8 @@ export function createScene(o: SceneOptions): SceneHandle {
       scene.traverse((obj) => {
         if (obj instanceof THREE.Mesh || obj instanceof THREE.Points) obj.geometry.dispose();
       });
-      foil.dispose(); dustMat.dispose(); envTex.dispose(); pmrem.dispose();
+      foil.dispose(); dustMat.dispose(); sprite.dispose(); envTex.dispose(); envRT.dispose(); pmrem.dispose();
+      bloom?.dispose();
       composer.dispose(); renderer.dispose();
     },
   };
