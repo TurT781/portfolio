@@ -73,7 +73,7 @@ export function createScene(o: SceneOptions): SceneHandle {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x000000);
   scene.fog = new THREE.Fog(0x000000, 6, 30);
-  const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 80);
+  const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 32);
 
   const envTex = new THREE.CanvasTexture(aurora(512, 256));
   envTex.mapping = THREE.EquirectangularReflectionMapping;
@@ -89,6 +89,12 @@ export function createScene(o: SceneOptions): SceneHandle {
     iridescence: 1, iridescenceIOR: 2.1, iridescenceThicknessRange: [140, 860],
     attenuationColor: new THREE.Color(0x6f8cff), attenuationDistance: 1.6,
   });
+
+  /* ── Géométries partagées : chaque taille répétée (éclats, cartes, plaquettes)
+     n'est construite qu'une fois et réutilisée sur tous ses meshes. ── */
+  const shardGeo = cardGeometry(0.5, 0.34, 0.06, 0.05);
+  const stepGeo = cardGeometry(1.05, 1.45, 0.1);
+  const chipGeo = cardGeometry(0.42, 0.28, 0.05, 0.04);
 
   /* ── Les étapes : un groupe par étape, à z = stationZ(i). userData.spin tourne lentement. ── */
   const groups: THREE.Group[] = [];
@@ -112,7 +118,7 @@ export function createScene(o: SceneOptions): SceneHandle {
     p.position.set(-1.6, 0.1, 0); p.rotation.set(0.04, 0.55, 0);
     g.add(p); g.userData.spin = p;
     ([[-2.9, -1.05, 1.1], [-0.6, 1.25, 0.8], [-0.2, -1.2, 1.6]] as const).forEach(([x, y, z], k) => {
-      const c = new THREE.Mesh(cardGeometry(0.5, 0.34, 0.06, 0.05), foil);
+      const c = new THREE.Mesh(shardGeo, foil);
       c.position.set(x, y, z); c.rotation.set(0.3 * k, 0.6 - 0.4 * k, 0.2);
       g.add(c);
     });
@@ -120,7 +126,7 @@ export function createScene(o: SceneOptions): SceneHandle {
   // 2 · Parcours : quatre cartes en escalier
   addStation(2, (g) => {
     for (let k = 0; k < 4; k++) {
-      const c = new THREE.Mesh(cardGeometry(1.05, 1.45, 0.1), foil);
+      const c = new THREE.Mesh(stepGeo, foil);
       c.position.set(1.0 + k * 0.55, 0.55 - k * 0.45, -k * 1.3); c.rotation.set(0, -0.6, 0.04);
       g.add(c);
     }
@@ -130,7 +136,7 @@ export function createScene(o: SceneOptions): SceneHandle {
     const h = new THREE.Group();
     for (let k = 0; k < 14; k++) {
       const a = (k / 14) * Math.PI * 2;
-      const c = new THREE.Mesh(cardGeometry(0.42, 0.28, 0.05, 0.04), foil);
+      const c = new THREE.Mesh(chipGeo, foil);
       c.position.set(Math.cos(a) * 1.6 - 1.7, (k / 14 - 0.5) * 3.2, Math.sin(a) * 1.6); c.rotation.set(0, -a, 0);
       h.add(c);
     }
@@ -181,7 +187,7 @@ export function createScene(o: SceneOptions): SceneHandle {
   }
 
   /* ── Scroll = position de la caméra. Rien d'autre ne bouge la page. ── */
-  const maxScroll = () => document.documentElement.scrollHeight - window.innerHeight;
+  let maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
   let mx = 0, my = 0, tx = 0, ty = 0;
   let camZ = CAM_AHEAD;
   let t0 = 0;
@@ -192,6 +198,7 @@ export function createScene(o: SceneOptions): SceneHandle {
   const onResize = () => {
     camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight); composer.setSize(window.innerWidth, window.innerHeight);
+    maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
   };
   const onVisibility = () => { visible = !document.hidden; };
   if (!still) window.addEventListener("pointermove", onPointer);
@@ -202,7 +209,7 @@ export function createScene(o: SceneOptions): SceneHandle {
   const loop = (t: number) => {
     if (!visible) return;
     const dt = Math.min((t - t0) / 1000, 0.05); t0 = t;
-    const p = still ? 0 : Math.min(Math.max(window.scrollY / Math.max(maxScroll(), 1), 0), 1);
+    const p = still ? 0 : Math.min(Math.max(window.scrollY / maxScroll, 0), 1);
     const k = RM || still ? 1 : 1 - Math.exp(-dt * 5.5);
     camZ = smooth(camZ, progressToZ(p), RM || still ? 10 : dt);
     mx += (tx - mx) * k; my += (ty - my) * k;
