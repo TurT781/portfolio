@@ -94,3 +94,6 @@ html.no-gl .station.right .stats { justify-content: flex-start; }
   .rail { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .hint { animation: none; } }
+
+/* Rendu fixe pour capturer la carte (tâche 9) : rien que le canvas. */
+html.still .brand, html.still .pill, html.still .rail, html.still .hint, html.still .grain, html.still main { display: none; }
