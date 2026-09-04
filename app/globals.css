@@ -31,3 +31,66 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
+
+/* ───────── La traversée ───────── */
+canvas#gl { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; z-index: 0; }
+.grain { position: fixed; inset: 0; z-index: 2; pointer-events: none; opacity: 0.14; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+/* La hauteur de scroll : c'est elle qui donne la longueur du voyage. */
+.track { height: 640vh; }
+
+.brand, .pill, .rail, .hint { position: fixed; z-index: 6; }
+.brand { top: 26px; left: 26px; font-size: 9.5px; letter-spacing: 0.26em; color: var(--color-dim); }
+.pill { top: 22px; right: 26px; display: flex; align-items: center; gap: 16px; border: 1px solid var(--color-hair); border-radius: 999px; padding: 10px 20px; backdrop-filter: blur(8px); }
+.pill button { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--color-dim); transition: color 0.3s; min-height: 24px; }
+.pill button:hover { color: var(--color-text); }
+.pill .sep { width: 30px; height: 1px; background: var(--color-hair); }
+.hint { left: 50%; bottom: 22px; transform: translateX(-50%); font-size: 8px; letter-spacing: 0.26em; color: var(--color-faint); animation: bob 2.4s ease-in-out infinite; transition: opacity 0.4s; }
+.hint.off { opacity: 0; }
+@keyframes bob { 50% { transform: translate(-50%, 7px); } }
+
+.rail { right: 30px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 22px; align-items: flex-end; }
+.rail button { display: flex; align-items: center; gap: 12px; min-height: 24px; font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--color-faint); transition: color 0.3s; }
+.rail button::after { content: ""; width: 14px; height: 1px; background: currentColor; transform-origin: right center; transition: transform 0.3s; }
+.rail button.on { color: var(--color-ice); }
+.rail button.on::after { transform: scaleX(2); }
+.rail button:hover { color: var(--color-text); }
+
+/* Chaque étape est du HTML réel, dans l'ordre, mais affiché en surimpression :
+   la caméra décide de son opacité. Avant la 3D, seule l'étape 0 est visible. */
+.station { position: fixed; z-index: 5; top: 50%; --st-center: -50%; transform: translateY(var(--st-center)); max-width: 440px; padding: 0 26px; opacity: 0; pointer-events: none; will-change: opacity, transform; }
+.station.on { opacity: 1; pointer-events: auto; }
+.station.left { left: 0; }
+.station.right { right: 0; text-align: right; padding-right: 170px; max-width: 610px; }
+.station.right .arrows a::before { content: ""; }
+.station.right .arrows a::after { content: " <-"; color: var(--color-ice); }
+.station.right .stats { justify-content: flex-end; }
+.t-h1 { font-size: clamp(26px, 4vw, 52px); margin-top: 16px; }
+.t-h2 { font-size: clamp(22px, 2.6vw, 34px); margin-top: 16px; }
+.station .t-body { margin: 16px 0 0; }
+.station .t-meta { margin: 18px 0 0; }
+
+.stats { display: flex; gap: 26px; margin-top: 22px; }
+.stats b { display: block; font-family: var(--font-mono); font-size: 24px; font-weight: 200; color: var(--color-ice); font-variant-numeric: tabular-nums; }
+.stats span { display: block; margin-top: 6px; font-family: var(--font-mono); font-size: 7.5px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--color-faint); }
+.arrows { margin-top: 20px; }
+.arrows a { display: block; padding: 11px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.08); font-family: var(--font-mono); font-size: 9px; font-weight: 300; letter-spacing: 0.2em; text-transform: uppercase; color: var(--color-dim); text-decoration: none; transition: color 0.3s; }
+.arrows a::before { content: "-> "; color: var(--color-ice); }
+.arrows a:hover { color: var(--color-text); }
+
+/* Sans WebGL : la même page, à plat, lisible. */
+html.no-gl canvas#gl, html.no-gl .track, html.no-gl .rail, html.no-gl .hint, html.no-gl .grain { display: none; }
+html.no-gl main { padding: 120px 0 80px; }
+html.no-gl .station { position: static; transform: none !important; opacity: 1 !important; pointer-events: auto; max-width: 640px; margin: 0 auto; padding: 56px 26px; text-align: left; }
+html.no-gl .station.right .arrows a::before { content: "-> "; color: var(--color-ice); }
+html.no-gl .station.right .arrows a::after { content: ""; }
+html.no-gl .station.right .stats { justify-content: flex-start; }
+
+@media (max-width: 720px) {
+  .station, .station.right { max-width: 100%; padding: 0 20px 90px; text-align: left; top: auto; bottom: 0; --st-center: 0px; transform: translateY(var(--st-center)); }
+  .station.right .arrows a::before { content: "-> "; color: var(--color-ice); }
+  .station.right .arrows a::after { content: ""; }
+  .station.right .stats { justify-content: flex-start; }
+  .rail { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .hint { animation: none; } }
