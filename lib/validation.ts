@@ -11,7 +11,8 @@ export function validateContact(data: unknown): Result {
     return { ok: false, error: "Invalid payload" };
   }
   const d = data as Record<string, unknown>;
-  const name = typeof d.name === "string" ? d.name.trim() : "";
+  let name = typeof d.name === "string" ? d.name.trim() : "";
+  name = name.replace(/\s+/g, " ");
   const email = typeof d.email === "string" ? d.email.trim() : "";
   const message = typeof d.message === "string" ? d.message.trim() : "";
 

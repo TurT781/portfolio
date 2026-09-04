@@ -28,6 +28,7 @@ export const metadata: Metadata = {
     description: "Je construis des systèmes qui tiennent en production.",
     type: "website",
     locale: "fr_FR",
+    images: [{ url: "/me.png", width: 256, height: 242, alt: "Flavien Patriarca" }],
   },
 };
 

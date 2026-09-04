@@ -24,7 +24,7 @@ export function CaseStudy() {
 
       <main className="case">
         <header className="case-head">
-          <Image src="/foil-card.png" alt="" width={360} height={420} priority className="case-orn" />
+          <Image src="/foil-card.png" alt="" width={360} height={420} className="case-orn" />
           <p className="kicker">{t(koopadex.kicker)}</p>
           <h1 className="t-display t-h1">{t(koopadex.title)}</h1>
           <p className="t-body">{t(koopadex.lede)}</p>
