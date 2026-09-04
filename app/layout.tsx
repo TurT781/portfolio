@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Martian_Mono, Schibsted_Grotesk } from "next/font/google";
 import { LanguageProvider } from "@/lib/i18n";
+import { siteUrl } from "@/lib/site-url";
 import "./globals.css";
 
 const martian = Martian_Mono({
@@ -16,8 +17,6 @@ const schibsted = Schibsted_Grotesk({
   weight: ["400", "500"],
   display: "swap",
 });
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
