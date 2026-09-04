@@ -75,7 +75,7 @@ export function createScene(o: SceneOptions): SceneHandle {
   scene.fog = new THREE.Fog(0x000000, 6, 30);
   const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 80);
 
-  const envTex = new THREE.CanvasTexture(aurora(1024, 512));
+  const envTex = new THREE.CanvasTexture(aurora(512, 256));
   envTex.mapping = THREE.EquirectangularReflectionMapping;
   envTex.colorSpace = THREE.SRGBColorSpace;
   const pmrem = new THREE.PMREMGenerator(renderer);
@@ -88,7 +88,6 @@ export function createScene(o: SceneOptions): SceneHandle {
     envMapIntensity: 3.4, clearcoat: 1, clearcoatRoughness: 0.06, specularIntensity: 1, reflectivity: 0.85,
     iridescence: 1, iridescenceIOR: 2.1, iridescenceThicknessRange: [140, 860],
     attenuationColor: new THREE.Color(0x6f8cff), attenuationDistance: 1.6,
-    sheen: 0.6, sheenColor: new THREE.Color(0xff9ee8),
   });
 
   /* ── Les étapes : un groupe par étape, à z = stationZ(i). userData.spin tourne lentement. ── */
@@ -174,10 +173,10 @@ export function createScene(o: SceneOptions): SceneHandle {
   /* ── Post-traitement ── */
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
-  const useBloom = false; // perf: transmission material + bloom composer cost too much CPU/GPU for the desktop budget; foil holds without it
+  const useBloom = !RM && !mobile;
   let bloom: UnrealBloomPass | undefined;
   if (useBloom) {
-    bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.45, 0.7, 0.82);
+    bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.55, 0.7, 0.82);
     composer.addPass(bloom);
   }
 
@@ -199,7 +198,8 @@ export function createScene(o: SceneOptions): SceneHandle {
   window.addEventListener("resize", onResize);
   document.addEventListener("visibilitychange", onVisibility);
 
-  renderer.setAnimationLoop((t: number) => {
+  let disposed = false;
+  const loop = (t: number) => {
     if (!visible) return;
     const dt = Math.min((t - t0) / 1000, 0.05); t0 = t;
     const p = still ? 0 : Math.min(Math.max(window.scrollY / Math.max(maxScroll(), 1), 0), 1);
@@ -234,10 +234,12 @@ export function createScene(o: SceneOptions): SceneHandle {
       l2.position.x = Math.cos(t * 0.00031 + 2.1) * 4.4;
     }
     composer.render();
-  });
+  };
+  renderer.compileAsync(scene, camera).then(() => { if (!disposed) renderer.setAnimationLoop(loop); });
 
   return {
     dispose() {
+      disposed = true;
       renderer.setAnimationLoop(null);
       window.removeEventListener("pointermove", onPointer);
       window.removeEventListener("resize", onResize);
