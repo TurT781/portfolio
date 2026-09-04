@@ -9,7 +9,7 @@ type Props = { onWork: () => void; onContact: () => void };
 export function Pill({ onWork, onContact }: Props) {
   const t = useT();
   return (
-    <nav className="pill" aria-label="Navigation">
+    <nav className="pill" aria-label={t(ui.nav.label)}>
       <button type="button" onClick={onWork}>{t(ui.nav.work)}</button>
       <span className="sep" aria-hidden="true" />
       <button type="button" onClick={onContact}>{t(ui.nav.contact)}</button>

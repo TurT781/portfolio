@@ -16,7 +16,7 @@ export function CaseStudy() {
   return (
     <>
       <Brand />
-      <nav className="pill" aria-label="Navigation">
+      <nav className="pill" aria-label={t(ui.nav.label)}>
         <Link href="/">{"<- "}{t(ui.nav.home)}</Link>
         <span className="sep" aria-hidden="true" />
         <LanguageToggle />

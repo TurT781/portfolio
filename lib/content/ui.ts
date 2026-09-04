@@ -2,6 +2,7 @@ export type I18nString = { fr: string; en: string };
 
 export const ui = {
   nav: {
+    label: { fr: "Navigation", en: "Navigation" },
     work: { fr: "Travaux", en: "Work" },
     contact: { fr: "Contact", en: "Contact" },
     home: { fr: "Accueil", en: "Home" },

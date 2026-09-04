@@ -4,8 +4,8 @@
   --color-ground: #000000;
   --color-ice: #a9e5ff;
   --color-text: rgba(255, 255, 255, 0.92);
-  --color-dim: rgba(255, 255, 255, 0.55);
-  --color-faint: rgba(255, 255, 255, 0.34);
+  --color-dim: rgba(255, 255, 255, 0.59);
+  --color-faint: rgba(255, 255, 255, 0.50);
   --color-hair: rgba(255, 255, 255, 0.16);
   --font-mono: var(--font-martian), ui-monospace, "Cascadia Mono", Consolas, monospace;
   --font-body: var(--font-schibsted), ui-sans-serif, system-ui, sans-serif;
@@ -42,7 +42,7 @@ canvas#gl { position: fixed; inset: 0; width: 100vw; height: 100vh; display: blo
 .brand, .pill, .rail, .hint { position: fixed; z-index: 6; }
 .brand { top: 26px; left: 26px; font-size: 9.5px; letter-spacing: 0.26em; color: var(--color-dim); }
 .pill { top: 22px; right: 26px; display: flex; align-items: center; gap: 16px; border: 1px solid var(--color-hair); border-radius: 999px; padding: 10px 20px; backdrop-filter: blur(8px); }
-.pill button { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--color-dim); transition: color 0.3s; min-height: 24px; }
+.pill button { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--color-dim); transition: color 0.3s; min-height: 24px; min-width: 24px; justify-content: center; }
 .pill button:hover { color: var(--color-text); }
 .pill .sep { width: 30px; height: 1px; background: var(--color-hair); }
 .hint { left: 50%; bottom: 22px; transform: translateX(-50%); font-size: 8px; letter-spacing: 0.26em; color: var(--color-faint); animation: bob 2.4s ease-in-out infinite; transition: opacity 0.4s; }
@@ -129,6 +129,6 @@ html.still .brand, html.still .pill, html.still .rail, html.still .hint, html.st
 .captures img { width: 100%; height: auto; border: 1px solid var(--color-hair); }
 .captures figcaption { margin-top: 10px; }
 .case-foot { display: flex; justify-content: space-between; gap: 16px; margin-top: 90px; padding-top: 30px; border-top: 1px solid var(--color-hair); }
-.case-foot a { text-decoration: none; color: var(--color-dim); }
+.case-foot a { text-decoration: none; color: var(--color-dim); min-height: 24px; display: inline-flex; align-items: center; }
 .case-foot a:hover { color: var(--color-text); }
 @media (max-width: 900px) { .case-orn { position: static; width: 160px; margin-bottom: 20px; } }
