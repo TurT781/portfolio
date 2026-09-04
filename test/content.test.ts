@@ -24,13 +24,23 @@ describe("stations", () => {
     expect(stations[4].id).toBe("contact");
     expect(stations[1].links?.some((l) => l.href === "/koopadex")).toBe(true);
   });
+
+  it("keeps the station side order stable", () => {
+    expect(stations.map((s) => s.side)).toEqual(["left", "right", "left", "right", "left"]);
+  });
 });
 
 describe("koopadex case study", () => {
   it("never names the client nor real business figures", () => {
     const all = JSON.stringify(koopadex).toLowerCase();
     expect(all).not.toContain("shoptacarte");
-    expect(all).not.toMatch(/\d+\s?(k€|€|eur)\b/);
+    expect(all).not.toMatch(/\d+\s?(k€|€|euros?|eur)\b/i);
+    expect(all).not.toMatch(/marge|chiffre d'affaires|turnover/);
+  });
+  it("keeps the section order stable", () => {
+    expect(koopadex.sections.map((s) => s.id)).toEqual([
+      "contexte", "probleme", "multitenant", "fiscal", "caisse", "chiffres", "stack", "appris", "captures",
+    ]);
   });
   it("is bilingual in every section", () => {
     for (const s of koopadex.sections) {
