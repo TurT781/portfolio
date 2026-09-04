@@ -1,0 +1,18 @@
+/node_modules
+/.next/
+/out/
+/build
+/coverage
+.DS_Store
+*.pem
+npm-debug.log*
+.env*
+!.env.local.example
+.vercel
+*.tsbuildinfo
+next-env.d.ts
+# outillage local, jamais dans l'app
+/.playwright-mcp/
+/.superpowers/
+/.remember/
+/ruvector.db

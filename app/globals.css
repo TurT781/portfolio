@@ -1,0 +1,4 @@
+@import "tailwindcss";
+
+:root { color-scheme: dark; }
+body { background: #000; color: rgba(255, 255, 255, 0.92); margin: 0; }
