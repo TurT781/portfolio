@@ -65,7 +65,7 @@ export function createScene(o: SceneOptions): SceneHandle {
   const { canvas, stationEls, reducedMotion: RM, mobile, still = false } = o;
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, mobile ? 1.25 : 1.6));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, mobile ? 1 : 1.5));
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.15;
@@ -153,7 +153,7 @@ export function createScene(o: SceneOptions): SceneHandle {
   scene.add(new THREE.AmbientLight(0x223355, 1.1));
 
   /* ── Poussière le long du couloir : c'est elle qui fait sentir la vitesse. ── */
-  const N = RM || mobile ? 900 : 3200;
+  const N = RM || mobile ? 900 : 2200;
   const pos = new Float32Array(N * 3);
   const col = new Float32Array(N * 3);
   const tint = new THREE.Color();
@@ -174,10 +174,10 @@ export function createScene(o: SceneOptions): SceneHandle {
   /* ── Post-traitement ── */
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
-  const useBloom = !RM && !mobile;
+  const useBloom = false; // perf: transmission material + bloom composer cost too much CPU/GPU for the desktop budget; foil holds without it
   let bloom: UnrealBloomPass | undefined;
   if (useBloom) {
-    bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.55, 0.7, 0.82);
+    bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.45, 0.7, 0.82);
     composer.addPass(bloom);
   }
 

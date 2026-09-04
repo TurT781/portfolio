@@ -46,7 +46,7 @@ export function Scene() {
           stationEls,
           onActiveChange: (i) => window.__traverseeOnActive?.(i),
           reducedMotion: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-          mobile: window.innerWidth < 720,
+          mobile: window.innerWidth < 900,
           still,
         });
       })
