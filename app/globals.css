@@ -97,3 +97,18 @@ html.no-gl .station.right .stats { justify-content: flex-start; }
 
 /* Rendu fixe pour capturer la carte (tâche 9) : rien que le canvas. */
 html.still .brand, html.still .pill, html.still .rail, html.still .hint, html.still .grain, html.still main { display: none; }
+
+/* ───────── Formulaire de contact ───────── */
+.cform { margin-top: 22px; display: grid; gap: 14px; max-width: 420px; }
+.cform .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.cform label { display: grid; gap: 6px; }
+.cform label span { font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--color-faint); }
+.cform input, .cform textarea { width: 100%; background: transparent; border: 0; border-bottom: 1px solid var(--color-hair); color: var(--color-text); font: inherit; font-size: 14px; padding: 8px 0; min-height: 24px; resize: none; }
+.cform input:focus, .cform textarea:focus { outline: none; border-bottom-color: var(--color-ice); }
+.cform .send { grid-template-columns: auto 1fr; align-items: center; }
+.cform button { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--color-ice); min-height: 24px; }
+.cform button:disabled { opacity: 0.5; cursor: default; }
+.cform [role="status"] { font-family: var(--font-mono); font-size: 8.5px; letter-spacing: 0.16em; text-transform: uppercase; }
+.cform .ok { color: var(--color-ice); }
+.cform .ko { color: var(--color-dim); }
+@media (max-width: 720px) { .cform .row { grid-template-columns: 1fr; } }

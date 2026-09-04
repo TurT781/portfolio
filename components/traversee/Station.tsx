@@ -4,6 +4,7 @@ import type { Station as StationData } from "@/lib/content/stations";
 import { useT } from "@/lib/i18n";
 import { Arrows } from "@/components/ui/Arrows";
 import { Stats } from "@/components/ui/Stats";
+import { ContactForm } from "@/components/contact/ContactForm";
 
 export function Station({ station, index }: { station: StationData; index: number }) {
   const t = useT();
@@ -29,6 +30,7 @@ export function Station({ station, index }: { station: StationData; index: numbe
         </p>
       )}
       {station.stats && <Stats items={station.stats} />}
+      {station.id === "contact" && <ContactForm />}
       {station.links && <Arrows links={station.links} />}
     </section>
   );
