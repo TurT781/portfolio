@@ -112,3 +112,23 @@ html.still .brand, html.still .pill, html.still .rail, html.still .hint, html.st
 .cform .ok { color: var(--color-ice); }
 .cform .ko { color: var(--color-dim); }
 @media (max-width: 720px) { .cform .row { grid-template-columns: 1fr; } }
+
+/* ───────── Page case study ───────── */
+.pill a { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--color-dim); text-decoration: none; min-height: 24px; display: inline-flex; align-items: center; }
+.pill a:hover { color: var(--color-text); }
+.case { max-width: 760px; margin: 0 auto; padding: 150px 26px 80px; }
+.case-head { position: relative; padding-bottom: 56px; border-bottom: 1px solid var(--color-hair); }
+.case-orn { position: absolute; right: -40px; top: -70px; width: 220px; height: auto; opacity: 0.9; pointer-events: none; }
+.case-head .t-body { margin-top: 18px; }
+.case-sec { padding: 64px 0 0; }
+.case-sec .t-h2 { margin-top: 12px; }
+.case-sec .t-body { margin-top: 16px; }
+.diagram { display: block; width: 100%; height: auto; margin-top: 28px; color: var(--color-ice); font-family: var(--font-mono); }
+.captures { display: grid; gap: 34px; margin-top: 28px; }
+.captures figure { margin: 0; }
+.captures img { width: 100%; height: auto; border: 1px solid var(--color-hair); }
+.captures figcaption { margin-top: 10px; }
+.case-foot { display: flex; justify-content: space-between; gap: 16px; margin-top: 90px; padding-top: 30px; border-top: 1px solid var(--color-hair); }
+.case-foot a { text-decoration: none; color: var(--color-dim); }
+.case-foot a:hover { color: var(--color-text); }
+@media (max-width: 900px) { .case-orn { position: static; width: 160px; margin-bottom: 20px; } }

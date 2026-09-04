@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { stations } from "@/lib/content/stations";
+import { koopadex } from "@/lib/content/koopadex";
 
 describe("stations", () => {
   it("has exactly five stations with unique ids", () => {
@@ -22,5 +23,22 @@ describe("stations", () => {
   it("puts contact last and the case study link on the Koopadex station", () => {
     expect(stations[4].id).toBe("contact");
     expect(stations[1].links?.some((l) => l.href === "/koopadex")).toBe(true);
+  });
+});
+
+describe("koopadex case study", () => {
+  it("never names the client nor real business figures", () => {
+    const all = JSON.stringify(koopadex).toLowerCase();
+    expect(all).not.toContain("shoptacarte");
+    expect(all).not.toMatch(/\d+\s?(k€|€|eur)\b/);
+  });
+  it("is bilingual in every section", () => {
+    for (const s of koopadex.sections) {
+      expect(s.title.fr && s.title.en).toBeTruthy();
+      for (const p of s.paragraphs) expect(p.fr && p.en).toBeTruthy();
+    }
+  });
+  it("lists captures with a caption each", () => {
+    for (const c of koopadex.captures) expect(c.src.startsWith("/koopadex/") && c.caption.fr && c.caption.en).toBeTruthy();
   });
 });
