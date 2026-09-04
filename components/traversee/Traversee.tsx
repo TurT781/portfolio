@@ -1,26 +1,37 @@
 "use client";
 
-import { useCallback, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { stationProgress } from "@/components/traversee/camera";
 import { Rail } from "@/components/traversee/Rail";
+import { Scene } from "@/components/traversee/Scene";
 import { Brand } from "@/components/ui/Brand";
 import { Pill } from "@/components/ui/Pill";
+import { stations } from "@/lib/content/stations";
 import { ui } from "@/lib/content/ui";
 import { useT } from "@/lib/i18n";
 
-export function Traversee({ children, scene }: { children: ReactNode; scene?: ReactNode }) {
+export function Traversee({ children }: { children: ReactNode }) {
   const t = useT();
   const [active, setActive] = useState(0);
 
   const goTo = useCallback((i: number) => {
-    const max = document.documentElement.scrollHeight - window.innerHeight;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (document.documentElement.classList.contains("no-gl")) {
+      document.getElementById(stations[i].id)?.scrollIntoView({ behavior: reduced ? "auto" : "smooth" });
+      return;
+    }
+    const max = document.documentElement.scrollHeight - window.innerHeight;
     window.scrollTo({ top: stationProgress(i) * max, behavior: reduced ? "auto" : "smooth" });
   }, []);
 
+  useEffect(() => {
+    const i = stations.findIndex((s) => s.id === window.location.hash.slice(1));
+    if (i > 0) goTo(i);
+  }, [goTo]);
+
   return (
     <>
-      {scene}
+      <Scene onActive={setActive} />
       <div className="grain" aria-hidden="true" />
       <div className="track" aria-hidden="true" />
       <Brand />
@@ -28,20 +39,6 @@ export function Traversee({ children, scene }: { children: ReactNode; scene?: Re
       <Rail active={active} goTo={goTo} />
       <main>{children}</main>
       <div className={`hint u-mono ${active === 0 ? "" : "off"}`} aria-hidden="true">{t(ui.nav.scroll)} ↓</div>
-      {/* setActive est branché par <Scene/> à la tâche 7 via l'événement ci-dessous */}
-      <ActiveListener onChange={setActive} />
     </>
   );
-}
-
-/** Reçoit `traversee:active` (CustomEvent<number>) émis par la scène. */
-function ActiveListener({ onChange }: { onChange: (i: number) => void }) {
-  if (typeof window !== "undefined") {
-    window.__traverseeOnActive = onChange;
-  }
-  return null;
-}
-
-declare global {
-  interface Window { __traverseeOnActive?: (i: number) => void }
 }

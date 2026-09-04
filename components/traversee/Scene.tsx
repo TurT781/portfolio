@@ -20,7 +20,7 @@ function fallbackToFlat() {
   });
 }
 
-export function Scene() {
+export function Scene({ onActive }: { onActive: (i: number) => void }) {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -44,7 +44,7 @@ export function Scene() {
         handle = createScene({
           canvas,
           stationEls,
-          onActiveChange: (i) => window.__traverseeOnActive?.(i),
+          onActiveChange: onActive,
           reducedMotion: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
           mobile: window.innerWidth < 900,
           still,
@@ -55,8 +55,9 @@ export function Scene() {
     return () => {
       cancelled = true;
       handle?.dispose();
+      document.documentElement.classList.remove("still", "no-gl");
     };
-  }, []);
+  }, [onActive]);
 
   return <canvas ref={ref} id="gl" aria-hidden="true" />;
 }
